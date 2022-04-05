@@ -76,7 +76,11 @@
 @section('js')
 <script>
     $(document).ready( function () {
-        $('#homeTable').DataTable();
+        function showTable(){
+            $('#search_friend_datatable').DataTable();
+        }
+
+        showTable();
 
         $("#searchBtn").on("click", function(){
             var getGender = $('#search_gender').val();
@@ -91,24 +95,37 @@
                 success: function(data)
                 {
                     console.log(data);
-                    $("#search_friend_datatable tbody").html("");
+                    if(data.length > 0){
 
-                    var sno = 0;
-                    var departCnt = "";
+                        $("#search_friend_datatable tbody").html("");
 
-                    data.forEach(function(friendLst){
-                        sno = sno+1;
-                        
-                        departCnt = departCnt+"<tr>";
-                        departCnt = departCnt+"<td>"+sno+"</td>";
-                        departCnt = departCnt+"<td><img src='/img/avatar/"+friendLst.profile_pic+"' height='50px' width='80px'/></td>";
-                        departCnt = departCnt+"<td>"+friendLst.name+"</td>";
-                        departCnt = departCnt+"<td>"+friendLst.designation+"</td>";
-                        departCnt = departCnt+"</tr>";
-                        
-                    });
+                        var sno = 0;
+                        var departCnt = "";
 
-                    $("#search_friend_datatable tbody").append(departCnt);
+                        data.forEach(function(friendLst){
+                            sno = sno+1;
+                            
+                            departCnt = departCnt+"<tr>";
+                            departCnt = departCnt+"<td>"+sno+"</td>";
+                            departCnt = departCnt+"<td><img src='/img/avatar/"+friendLst.profile_pic+"' height='50px' width='80px'/></td>";
+                            departCnt = departCnt+"<td>"+friendLst.name+"</td>";
+                            departCnt = departCnt+"<td>"+friendLst.designation+"</td>";
+                            departCnt = departCnt+"</tr>";
+                            
+                        });
+
+                        $("#search_friend_datatable tbody").append(departCnt);
+                    }else{
+                        var table = $('#search_friend_datatable').DataTable();
+
+                        //clear datatable
+                        table.clear().draw();
+
+                        //destroy datatable
+                        table.destroy();
+                    }
+                    showTable();
+
                 },error: function(err){
                     console.log(err);
                 }
