@@ -11,7 +11,7 @@
                 <div class="card-header d-flex justify-content-between">
                     <h5>User Profile</h5>
                     <input type="hidden" id="friend_id" value="{{$profile->id}}"/>
-                    <a id="add_user" class="btn btn-sm btn-secondary bg-white">{{$profile->users !== Null ? 'Add Friend': 'Friends'}}</a>
+                    <a id="add_user" class="btn btn-sm btn-secondary bg-white">{{$profile['friend_status'] == Null ? 'Add Friend': 'Friends'}}</a>
                 </div>
                 <div class="card-body">
                     <div class="container">

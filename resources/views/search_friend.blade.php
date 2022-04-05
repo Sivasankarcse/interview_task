@@ -16,22 +16,32 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <input type="text" class="form-control search_gender" id="search_gender" name="search_gender" placeholder="Search Gender"/>
+                                    <select class="form-control live_search" id="search_gender" name="search_gender">
+                                        <option value="">Choose Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="femail">Female</option>
+                                        <option value="transgender">Transgender</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <input type="date" class="form-control" id="search_dob" name="search_dob" placeholder="Search D.O.B"/>
+                                    <input type="date" class="form-control live_search" id="search_dob" name="search_dob" placeholder="Search D.O.B"/>
                                 </div>
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" id="f_color" name="f_color" placeholder="Search Favorite Color"/>
+                                    <input type="text" class="form-control live_search" id="f_color" name="f_color" placeholder="Search Favorite Color"/>
                                 </div>
                             </div>
                             <div class="col-md-6 mt-3">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" id="f_actor" name="f_actor" placeholder="Search Favorite Actor"/>
+                                    <input type="text" class="form-control live_search" id="f_actor" name="f_actor" placeholder="Search Favorite Actor"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <div class="form-group">
+                                    <button type="button" id="searchBtn" class="btn btn-info">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -68,14 +78,16 @@
     $(document).ready( function () {
         $('#homeTable').DataTable();
 
-        $("#search_gender").on("input",function()
-        {
+        $("#searchBtn").on("click", function(){
             var getGender = $('#search_gender').val();
+            var getDob = $('#search_dob').val();
+            var getColor = $('#f_color').val();
+            var getActor = $('#f_actor').val();
 
             $.ajax({
                 method: "POST",
-                url: "/search_gender",
-                data: { gender:getGender, _token:"{{csrf_token()}}"},
+                url: "live_search",
+                data: { getGender:getGender, getDob: getDob, getColor: getColor, getActor:getActor,  _token:"{{csrf_token()}}"},
                 success: function(data)
                 {
                     console.log(data);
@@ -89,7 +101,7 @@
                         
                         departCnt = departCnt+"<tr>";
                         departCnt = departCnt+"<td>"+sno+"</td>";
-                        departCnt = departCnt+"<td><img src='img/avatar/'"+friendLst.profile_pic+"' height='50px' width='80px'/></td>";
+                        departCnt = departCnt+"<td><img src='/img/avatar/"+friendLst.profile_pic+"' height='50px' width='80px'/></td>";
                         departCnt = departCnt+"<td>"+friendLst.name+"</td>";
                         departCnt = departCnt+"<td>"+friendLst.designation+"</td>";
                         departCnt = departCnt+"</tr>";
@@ -99,105 +111,6 @@
                     $("#search_friend_datatable tbody").append(departCnt);
                 },error: function(err){
                     console.log(err);
-                }
-            });
-        });
-
-        $("#search_dob").on("input",function()
-        {
-            var getDob = $('#search_dob').val();
-
-            $.ajax({
-                method: "POST",
-                url: "/search_dob",
-                data: { dob:getDob, _token:"{{csrf_token()}}"},
-                success: function(data)
-                {
-                    console.log(data);
-                    $("#search_friend_datatable tbody").html("");
-
-                    var sno = 0;
-                    var departCnt = "";
-
-                    data.forEach(function(friendLst){
-                        sno = sno+1;
-
-                        departCnt = departCnt+"<tr>";
-                        departCnt = departCnt+"<td>"+sno+"</td>";
-                        departCnt = departCnt+"<td><img src='img/avatar/'"+friendLst.profile_pic+"' height='50px' width='80px'/></td>";
-                        departCnt = departCnt+"<td>"+friendLst.name+"</td>";
-                        departCnt = departCnt+"<td>"+friendLst.designation+"</td>";
-                        departCnt = departCnt+"</tr>";
-                        
-                    });
-
-                    $("#search_friend_datatable tbody").append(departCnt);
-                }
-            });
-        });
-
-        $("#f_color").on("input",function()
-        {
-            var f_color = $('#f_color').val();
-
-            $.ajax({
-                method: "POST",
-                url: "/search_color",
-                data: { color:f_color, _token:"{{csrf_token()}}"},
-                success: function(data)
-                {
-                    console.log(data);
-                    $("#search_friend_datatable tbody").html("");
-
-                    var sno = 0;
-                    var departCnt = "";
-
-                    data.forEach(function(friendLst){
-                        sno = sno+1;
-
-                        departCnt = departCnt+"<tr>";
-                        departCnt = departCnt+"<td>"+sno+"</td>";
-                        departCnt = departCnt+"<td><img src='/img/avatar/'"+friendLst.profile_pic+"' height='50px' width='80px'/></td>";
-                        departCnt = departCnt+"<td>"+friendLst.name+"</td>";
-                        departCnt = departCnt+"<td>"+friendLst.designation+"</td>";
-                        departCnt = departCnt+"</tr>";
-                        
-                    });
-
-                    $("#search_friend_datatable tbody").append(departCnt);
-                }
-            });
-        });
-
-        $("#f_actor").on("input",function()
-        {
-            var actor = $('#f_actor').val();
-
-            $.ajax({
-                method: "POST",
-                url: "/search_actor",
-                data: { actor:actor, _token:"{{csrf_token()}}"},
-                success: function(data)
-                {
-                    console.log(data);
-                    $("#search_friend_datatable tbody").html("");
-
-                    var sno = 0;
-                    var departCnt = "";
-
-                    data.forEach(function(friendLst){
-                        sno = sno+1;
-
-                        departCnt = departCnt+"<tr>";
-                        departCnt = departCnt+"<td>"+sno+"</td>";
-                        departCnt = departCnt+"<td><img src='img/avatar/'"+friendLst.profile_pic+"' height='50px' width='80px'/></td>";
-                        departCnt = departCnt+"<td>"+friendLst.name+"</td>";
-                        departCnt = departCnt+"<td>"+friendLst.designation+"</td>";
-                        departCnt = departCnt+"</tr>";
-                        
-                    });
-
-                    $("#search_friend_datatable tbody").append(departCnt);
                 }
             });
         });

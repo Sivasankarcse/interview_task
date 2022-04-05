@@ -69,8 +69,8 @@ class RegisterController extends Controller
             $profilepic = request()->file('profile_pic')->getClientOriginalExtension();
             $imgName = time().'.'.$profilepic;
             $profile->move('img/avatar', $imgName);
-            // request()->file('profile_pic')->storeAs('images', 'profile_picture/'.$profilepic);
         }
+
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],

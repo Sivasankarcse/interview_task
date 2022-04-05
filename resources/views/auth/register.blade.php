@@ -77,13 +77,6 @@
                                     <option value="femail">Female</option>
                                     <option value="transgender">Transgender</option>
                                 </select>
-                                <!-- <input id="gender" type="text" class="form-control @error('gender') is-invalid @enderror" name="gender" required autocomplete="gender">
-
-                                @error('gender')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror -->
                             </div>
                         </div>
 

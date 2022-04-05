@@ -72,39 +72,46 @@ class HomeController extends Controller
         return view('match_friend', compact('match_friends'));
     }
 
-    public function search_gender(Request $request)
+    public function live_search(Request $request)
     {
-        $gender = $request->gender;
-        $searchGender = User::where('gender', 'LIKE', $gender.'%')->whereNotIn('id', '=',auth()->user()->id)->get();
-        return response($searchGender);
-    }
+        $query = FriendList::select('*')
+                    ->leftJoin('users','users.id','=','friend_lists.friend_id')
+                    ->where('friend_lists.user_id', '=', auth()->user()->id);
+                    if($request->getGender){
+                        $query->where('users.gender', '=', $request->getGender);
+                    }
+                    if($request->getActor){
+                        $query->where('users.favorite_actor', '=', $request->getActor);
+                    }
+                    if($request->getDob){
+                        $query->where('users.dob', '=', $request->getDob);
+                    }
+                    if($request->getColor){
+                        $query->where('users.favorite_color', '=', $request->getColor);
+                    }
 
-    public function search_dob(Request $request)
-    {
-        $dob = $request->dob;
-        $searchGender = User::where('dob', 'LIKE', $dob.'%')->whereNotIn('id', '=',auth()->user()->id)->get();
-        // dd($searchGender);
-        return response($searchGender);
-    }
+        $final = $query->get();
 
-    public function search_color(Request $request)
-    {
-        $color = $request->color;
-        $searchColor = User::where('favorite_color', 'LIKE', $color.'%')->whereNotIn('id', '=',auth()->user()->id)->get();
-        return response($searchColor);
-    }
-
-    public function search_actor(Request $request)
-    {
-        $actor = $request->actor;
-        $searchActor = User::where('favorite_actor', 'LIKE', $actor.'%')->whereNotIn('id', '=',auth()->user()->id)->get();
-        // dd($searchActor);
-        return response($searchActor);
+        return response($final);
     }
 
     public function user_profile($id)
     {
-        $profile = User::with('users:id,friend_id,user_id')->where('id', '=', $id)->first();
+        $profile = User::with('users:id,user_id,friend_id')->where('id', '=', $id)->first();
+
+        $checkFriend = FriendList::where('user_id','=', auth()->user()->id)->get();
+
+        $profile['friend_status'] = Null;
+
+        if(!empty($checkFriend)){
+            foreach($checkFriend as $usr)
+            {
+                if($usr->friend_id == $id){
+                    $profile['friend_status'] = "active";
+                }
+            }
+        }
+
         return view('user_profile', compact('profile'));
     }
 
@@ -114,7 +121,7 @@ class HomeController extends Controller
 
         $user = FriendList::where('friend_id', '=', $request->friendId)->where('user_id','=',$userId)->first();
 
-        if ($user === null)
+        if($user === null)
         {
             $addFriend = new FriendList();
             $addFriend->user_id = $userId;
